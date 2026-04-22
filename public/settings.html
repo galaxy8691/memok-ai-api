@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memok AI - 设置</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #0f0f1a;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+    nav {
+      background: rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand svg { width: 24px; height: 24px; }
+    .nav-links a {
+      color: #a0a0b0;
+      text-decoration: none;
+      font-size: 14px;
+      margin-left: 20px;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .container {
+      max-width: 720px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    h1 { font-size: 22px; margin-bottom: 24px; color: #fff; }
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .card h2 { font-size: 16px; margin-bottom: 16px; color: #d0d0e0; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; margin-bottom: 6px; color: #b0b0c0; }
+    input[type="text"], input[type="password"], input[type="number"], input[type="url"], select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.2);
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+    input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="url"]:focus, select:focus { border-color: #6366f1; }
+    input:disabled, select:disabled {
+      background: rgba(255,255,255,0.06);
+      color: #808090;
+      cursor: not-allowed;
+    }
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background: #6366f1;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    button:hover { background: #4f46e5; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    button.secondary {
+      background: rgba(255,255,255,0.08);
+      margin-left: 10px;
+    }
+    button.secondary:hover { background: rgba(255,255,255,0.14); }
+    .error {
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #fca5a5;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .success {
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: #86efac;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .hint { font-size: 12px; color: #808090; margin-top: 4px; }
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-env { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+    .badge-config { background: rgba(34,197,94,0.15); color: #86efac; }
+    .badge-default { background: rgba(255,255,255,0.08); color: #a0a0b0; }
+    .readonly-section {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+    .readonly-section h3 {
+      font-size: 14px;
+      color: #a0a0b0;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+      Memok AI
+    </div>
+    <div class="nav-links">
+      <a href="/">首页</a>
+      <a href="/settings">设置</a>
+      <a href="#" id="logoutLink">退出</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>设置</h1>
+
+    <div class="card">
+      <h2>服务配置</h2>
+      <div class="error" id="configError"></div>
+      <div class="success" id="configSuccess"></div>
+      <div id="configFields"></div>
+      <div style="margin-top: 8px;">
+        <button type="button" id="saveConfigBtn" onclick="saveConfig()">保存配置</button>
+        <button type="button" class="secondary" id="resetConfigBtn" onclick="resetConfig()">恢复默认</button>
+      </div>
+      <div class="readonly-section">
+        <h3>环境变量（只读）</h3>
+        <div id="envFields"></div>
+      </div>
+      <p class="hint" style="margin-top: 12px;">
+        标有 <span class="badge badge-env">env</span> 的项由环境变量控制，优先级最高；
+        <span class="badge badge-config">config</span> 的项已写入 config.toml；
+        <span class="badge badge-default">default</span> 的项使用内置默认值。
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>修改密码</h2>
+      <div class="error" id="error"></div>
+      <div class="success" id="success"></div>
+      <form id="changeForm">
+        <div class="form-group">
+          <label for="oldPassword">当前密码</label>
+          <input type="password" id="oldPassword" name="oldPassword" required autocomplete="current-password">
+        </div>
+        <div class="form-group">
+          <label for="newPassword">新密码</label>
+          <input type="password" id="newPassword" name="newPassword" required autocomplete="new-password">
+          <div class="hint">至少 6 位字符</div>
+        </div>
+        <div class="form-group">
+          <label for="confirmNewPassword">确认新密码</label>
+          <input type="password" id="confirmNewPassword" name="confirmNewPassword" required autocomplete="new-password">
+        </div>
+        <button type="submit" id="submitBtn">保存修改</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('logoutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      await fetch('/api/logout', { method: 'POST' });
+      window.location.href = '/login';
+    });
+
+    // Password change form
+    const form = document.getElementById('changeForm');
+    const errorEl = document.getElementById('error');
+    const successEl = document.getElementById('success');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.style.display = 'none';
+      successEl.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = '保存中…';
+
+      const oldPassword = form.oldPassword.value;
+      const newPassword = form.newPassword.value;
+      const confirmNewPassword = form.confirmNewPassword.value;
+
+      if (newPassword !== confirmNewPassword) {
+        showError('两次输入的新密码不一致');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '保存修改';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/change-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ oldPassword, newPassword, confirmNewPassword })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showSuccess('密码修改成功');
+          form.reset();
+        } else {
+          showError(data.error || '修改失败，请重试');
+        }
+      } catch (err) {
+        showError('网络错误，请重试');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '保存修改';
+      }
+    });
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+    }
+    function showSuccess(msg) {
+      successEl.textContent = msg;
+      successEl.style.display = 'block';
+    }
+
+    // Service config
+    let configData = {};
+    let metaData = [];
+
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config');
+        if (res.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+        if (!res.ok) throw new Error('加载失败');
+        const data = await res.json();
+        configData = data.config;
+        metaData = data.meta;
+        renderConfig();
+      } catch (e) {
+        showConfigError('加载配置失败: ' + e.message);
+      }
+    }
+
+    function renderConfig() {
+      const fieldsEl = document.getElementById('configFields');
+      const envEl = document.getElementById('envFields');
+      fieldsEl.innerHTML = '';
+      envEl.innerHTML = '';
+
+      for (const m of metaData) {
+        const item = configData[m.key];
+        if (!item) continue;
+
+        const sourceBadge = item.source === 'env'
+          ? '<span class="badge badge-env">env</span>'
+          : item.source === 'config'
+          ? '<span class="badge badge-config">config</span>'
+          : '<span class="badge badge-default">default</span>';
+
+        if (item.source === 'env' || !item.editable) {
+          const div = document.createElement('div');
+          div.className = 'form-group';
+          const inputType = m.type === 'password' ? 'password' : 'text';
+          div.innerHTML = `
+            <label>${m.label} ${sourceBadge}</label>
+            <input type="${inputType}" value="${escapeHtml(String(item.value))}" disabled />
+          `;
+          envEl.appendChild(div);
+        } else {
+          const div = document.createElement('div');
+          div.className = 'form-group';
+          let inputHtml = '';
+          if (m.type === 'boolean') {
+            inputHtml = `<select id="field-${m.key}">
+              <option value="false" ${item.value === false ? 'selected' : ''}>false</option>
+              <option value="true" ${item.value === true ? 'selected' : ''}>true</option>
+            </select>`;
+          } else if (m.type === 'number') {
+            inputHtml = `<input type="number" id="field-${m.key}" value="${escapeHtml(String(item.value))}" min="${m.min ?? ''}" max="${m.max ?? ''}" />`;
+          } else if (m.type === 'password') {
+            inputHtml = `<input type="password" id="field-${m.key}" value="${escapeHtml(String(item.value))}" placeholder="输入 API Key" />`;
+          } else {
+            inputHtml = `<input type="${m.type === 'url' ? 'url' : 'text'}" id="field-${m.key}" value="${escapeHtml(String(item.value))}" />`;
+          }
+          div.innerHTML = `
+            <label>${m.label} ${sourceBadge}</label>
+            ${inputHtml}
+          `;
+          fieldsEl.appendChild(div);
+        }
+      }
+    }
+
+    async function saveConfig() {
+      const updates = {};
+      for (const m of metaData) {
+        const item = configData[m.key];
+        if (!item || item.source === 'env' || !item.editable) continue;
+
+        const el = document.getElementById(`field-${m.key}`);
+        if (!el) continue;
+
+        let value = el.value;
+        if (m.type === 'number') {
+          value = Number(value);
+          if (!Number.isFinite(value)) {
+            showConfigError(`${m.label} 必须为有效数字`);
+            return;
+          }
+          if (m.min !== undefined && value < m.min) {
+            showConfigError(`${m.label} 不能小于 ${m.min}`);
+            return;
+          }
+          if (m.max !== undefined && value > m.max) {
+            showConfigError(`${m.label} 不能大于 ${m.max}`);
+            return;
+          }
+        } else if (m.type === 'boolean') {
+          value = value === 'true';
+        }
+
+        if (m.type === 'password') {
+          // Skip if user didn't change the masked placeholder
+          if (value === item.value && item.raw === null) continue;
+          // Skip empty password that was already empty
+          if (!value && !item.raw) continue;
+        }
+
+        if (value !== item.raw) {
+          updates[m.key] = value;
+        }
+      }
+
+      if (Object.keys(updates).length === 0) {
+        showConfigSuccess('没有需要保存的更改');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || '保存失败');
+        showConfigSuccess('配置已保存');
+        await loadConfig();
+      } catch (e) {
+        showConfigError('保存失败: ' + e.message);
+      }
+    }
+
+    async function resetConfig() {
+      if (!confirm('确定要恢复默认值吗？这将清除 config.toml 中的自定义配置。')) return;
+      try {
+        const res = await fetch('/api/config', { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || '重置失败');
+        showConfigSuccess('已恢复默认值');
+        await loadConfig();
+      } catch (e) {
+        showConfigError('重置失败: ' + e.message);
+      }
+    }
+
+    function showConfigError(msg) {
+      const el = document.getElementById('configError');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('configSuccess').style.display = 'none';
+    }
+    function showConfigSuccess(msg) {
+      const el = document.getElementById('configSuccess');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('configError').style.display = 'none';
+      setTimeout(() => el.style.display = 'none', 4000);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    loadConfig();
+  </script>
+</body>
+</html>

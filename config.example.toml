@@ -1,0 +1,14 @@
+[memok]
+dbPath = "./data/memok.sqlite"
+llmModel = "gpt-4o-mini"
+llmMaxWorkers = 4
+articleSentencesMaxOutputTokens = 8_192
+coreWordsNormalizeMaxOutputTokens = 32_768
+sentenceMergeMaxCompletionTokens = 2_048
+openaiBaseUrl = "https://api.openai.com/v1"
+openaiApiKey = ""
+articleWordImportInitialWeight = 1
+articleWordImportInitialDuration = 7
+dreamShortTermToLongTermWeightThreshold = 7
+relevanceScoreMaxLlmAttempts = 5
+dreamTime = "03:00"
